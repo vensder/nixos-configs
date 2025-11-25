@@ -26,11 +26,29 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Check if MSBuild 17 exists (as mentioned in requirements)
-$msbuild17Path = "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
-if (Test-Path $msbuild17Path) {
-    Write-Host "[OK] MSBuild 17 detected at: $msbuild17Path" -ForegroundColor Green
-} else {
-    Write-Host "[WARNING] MSBuild 17 not found at expected location" -ForegroundColor Yellow
+$msbuild17Paths = @(
+    "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe",
+    "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+    "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\amd64\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
+    "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe"
+)
+
+$msbuild17Found = $false
+foreach ($path in $msbuild17Paths) {
+    if (Test-Path $path) {
+        Write-Host "[OK] MSBuild 17 detected at: $path" -ForegroundColor Green
+        $msbuild17Found = $true
+        break
+    }
+}
+if (-not $msbuild17Found) {
+    Write-Host "[WARNING] MSBuild 17 not found at expected locations" -ForegroundColor Yellow
 }
 Write-Host ""
 
@@ -156,13 +174,22 @@ Write-Host "Verifying MSBuild Installations" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 $msbuildVersions = @(
-    @{Version="14.0"; Paths=@("C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe")},
+    @{Version="14.0"; Paths=@("C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe",
+                               "C:\Program Files (x86)\MSBuild\14.0\Bin\amd64\MSBuild.exe")},
     @{Version="16.0"; Paths=@("C:\Program Files\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-                               "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe")},
+                               "C:\Program Files\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe",
+                               "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                               "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe")},
     @{Version="17.0"; Paths=@("C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                               "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe",
+                               "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                               "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe",
                                "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
+                               "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64\MSBuild.exe",
                                "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
-                               "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe")}
+                               "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\amd64\MSBuild.exe",
+                               "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
+                               "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe")}
 )
 
 foreach ($version in $msbuildVersions) {
