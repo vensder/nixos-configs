@@ -28,9 +28,9 @@ Write-Host ""
 # Check if MSBuild 17 exists (as mentioned in requirements)
 $msbuild17Path = "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
 if (Test-Path $msbuild17Path) {
-    Write-Host "[✓] MSBuild 17 detected at: $msbuild17Path" -ForegroundColor Green
+    Write-Host "[OK] MSBuild 17 detected at: $msbuild17Path" -ForegroundColor Green
 } else {
-    Write-Host "[!] MSBuild 17 not found at expected location" -ForegroundColor Yellow
+    Write-Host "[WARNING] MSBuild 17 not found at expected location" -ForegroundColor Yellow
 }
 Write-Host ""
 
@@ -46,10 +46,10 @@ function Download-File {
         $ProgressPreference = 'SilentlyContinue'
         Invoke-WebRequest -Uri $Url -OutFile $Output -UseBasicParsing
         $ProgressPreference = 'Continue'
-        Write-Host "[✓] Download complete" -ForegroundColor Green
+        Write-Host "[OK] Download complete" -ForegroundColor Green
         return $true
     } catch {
-        Write-Host "[✗] Download failed: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Download failed: $_" -ForegroundColor Red
         return $false
     }
 }
@@ -79,7 +79,7 @@ Write-Host "--------------------------------------------------------" -Foregroun
 
 $msbuild14Existing = Test-MSBuildVersion "14.0"
 if ($msbuild14Existing) {
-    Write-Host "[!] MSBuild 14 already installed at: $msbuild14Existing" -ForegroundColor Yellow
+    Write-Host "[WARNING] MSBuild 14 already installed at: $msbuild14Existing" -ForegroundColor Yellow
     Write-Host "    Skipping installation..." -ForegroundColor Yellow
 } else {
     $vs2015BuildToolsUrl = "https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe"
@@ -98,9 +98,9 @@ if ($msbuild14Existing) {
         $process = Start-Process -FilePath $vs2015Installer -ArgumentList $installArgs -Wait -PassThru
         
         if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
-            Write-Host "[✓] MSBuild 14 installed successfully" -ForegroundColor Green
+            Write-Host "[OK] MSBuild 14 installed successfully" -ForegroundColor Green
         } else {
-            Write-Host "[✗] Installation failed with exit code: $($process.ExitCode)" -ForegroundColor Red
+            Write-Host "[ERROR] Installation failed with exit code: $($process.ExitCode)" -ForegroundColor Red
         }
     }
 }
@@ -114,7 +114,7 @@ Write-Host "--------------------------------------------------------" -Foregroun
 
 $msbuild16Existing = Test-MSBuildVersion "Current"
 if ($msbuild16Existing -and $msbuild16Existing -like "*2019*") {
-    Write-Host "[!] MSBuild 16 already installed at: $msbuild16Existing" -ForegroundColor Yellow
+    Write-Host "[WARNING] MSBuild 16 already installed at: $msbuild16Existing" -ForegroundColor Yellow
     Write-Host "    Skipping installation..." -ForegroundColor Yellow
 } else {
     # Download VS Build Tools bootstrapper
@@ -137,12 +137,12 @@ if ($msbuild16Existing -and $msbuild16Existing -like "*2019*") {
         $process = Start-Process -FilePath $vs2019Installer -ArgumentList $installArgs -Wait -PassThru
         
         if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
-            Write-Host "[✓] MSBuild 16 installed successfully" -ForegroundColor Green
+            Write-Host "[OK] MSBuild 16 installed successfully" -ForegroundColor Green
             if ($process.ExitCode -eq 3010) {
-                Write-Host "[!] A restart is required to complete the installation" -ForegroundColor Yellow
+                Write-Host "[WARNING] A restart is required to complete the installation" -ForegroundColor Yellow
             }
         } else {
-            Write-Host "[✗] Installation failed with exit code: $($process.ExitCode)" -ForegroundColor Red
+            Write-Host "[ERROR] Installation failed with exit code: $($process.ExitCode)" -ForegroundColor Red
         }
     }
 }
@@ -169,7 +169,7 @@ foreach ($version in $msbuildVersions) {
     $found = $false
     foreach ($path in $version.Paths) {
         if (Test-Path $path) {
-            Write-Host "[✓] MSBuild $($version.Version) found:" -ForegroundColor Green
+            Write-Host "[OK] MSBuild $($version.Version) found:" -ForegroundColor Green
             Write-Host "    $path" -ForegroundColor Gray
             
             # Get version info
@@ -180,7 +180,7 @@ foreach ($version in $msbuildVersions) {
         }
     }
     if (-not $found) {
-        Write-Host "[✗] MSBuild $($version.Version) not found" -ForegroundColor Red
+        Write-Host "[ERROR] MSBuild $($version.Version) not found" -ForegroundColor Red
     }
     Write-Host ""
 }
@@ -188,7 +188,7 @@ foreach ($version in $msbuildVersions) {
 # Cleanup
 Write-Host "Cleaning up temporary files..." -ForegroundColor Yellow
 Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
-Write-Host "[✓] Cleanup complete" -ForegroundColor Green
+Write-Host "[OK] Cleanup complete" -ForegroundColor Green
 Write-Host ""
 
 Write-Host "========================================" -ForegroundColor Cyan
