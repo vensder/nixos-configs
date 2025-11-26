@@ -8,7 +8,7 @@
     This script installs:
     - MSBuild 14 (Visual Studio 2015 Build Tools)
     - MSBuild 16 (Visual Studio 2019 Build Tools)
-    
+
     MSBuild versions can coexist on the same machine.
 #>
 
@@ -58,7 +58,7 @@ function Download-File {
         [string]$Url,
         [string]$Output
     )
-    
+
     Write-Host "Downloading: $Output" -ForegroundColor Yellow
     try {
         $ProgressPreference = 'SilentlyContinue'
@@ -75,12 +75,12 @@ function Download-File {
 # Function to check if MSBuild version exists
 function Test-MSBuildVersion {
     param([string]$Version)
-    
+
     $paths = @(
         "C:\Program Files (x86)\MSBuild\$Version\Bin\MSBuild.exe",
         "C:\Program Files\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
     )
-    
+
     foreach ($path in $paths) {
         if (Test-Path $path) {
             return $path
@@ -102,19 +102,19 @@ if ($msbuild14Existing) {
 } else {
     $vs2015BuildToolsUrl = "https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe"
     $vs2015Installer = Join-Path $tempDir "BuildTools_VS2015.exe"
-    
+
     if (Download-File -Url $vs2015BuildToolsUrl -Output $vs2015Installer) {
         Write-Host "Installing Visual Studio 2015 Build Tools..." -ForegroundColor Yellow
         Write-Host "(This may take several minutes, please wait...)" -ForegroundColor Yellow
-        
+
         $installArgs = @(
             "/Quiet",
             "/NoRestart",
             "/Full"
         )
-        
+
         $process = Start-Process -FilePath $vs2015Installer -ArgumentList $installArgs -Wait -PassThru
-        
+
         if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
             Write-Host "[OK] MSBuild 14 installed successfully" -ForegroundColor Green
         } else {
@@ -138,11 +138,11 @@ if ($msbuild16Existing -and $msbuild16Existing -like "*2019*") {
     # Download VS Build Tools bootstrapper
     $vs2019BootstrapperUrl = "https://aka.ms/vs/16/release/vs_buildtools.exe"
     $vs2019Installer = Join-Path $tempDir "vs_buildtools2019.exe"
-    
+
     if (Download-File -Url $vs2019BootstrapperUrl -Output $vs2019Installer) {
         Write-Host "Installing Visual Studio 2019 Build Tools..." -ForegroundColor Yellow
         Write-Host "(This may take several minutes, please wait...)" -ForegroundColor Yellow
-        
+
         $installArgs = @(
             "--quiet",
             "--wait",
@@ -151,9 +151,9 @@ if ($msbuild16Existing -and $msbuild16Existing -like "*2019*") {
             "--add", "Microsoft.VisualStudio.Workload.MSBuildTools",
             "--add", "Microsoft.VisualStudio.Workload.VCTools"
         )
-        
+
         $process = Start-Process -FilePath $vs2019Installer -ArgumentList $installArgs -Wait -PassThru
-        
+
         if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
             Write-Host "[OK] MSBuild 16 installed successfully" -ForegroundColor Green
             if ($process.ExitCode -eq 3010) {
@@ -198,7 +198,7 @@ foreach ($version in $msbuildVersions) {
         if (Test-Path $path) {
             Write-Host "[OK] MSBuild $($version.Version) found:" -ForegroundColor Green
             Write-Host "    $path" -ForegroundColor Gray
-            
+
             # Get version info
             $versionInfo = & $path /version /nologo 2>&1 | Select-Object -First 1
             Write-Host "    Version: $versionInfo" -ForegroundColor Gray
