@@ -1,5 +1,8 @@
 # Windows 11 VM Setup Script
-# Run this in PowerShell as Administrator
+# Run PowerShell as Administrator
+# Then run command: Set-ExecutionPolicy -Scope Process -Force Bypass
+# Then Run this script: .\windows_setup.ps1
+
 
 Write-Host "Starting Windows 11 VM setup..." -ForegroundColor Green
 
